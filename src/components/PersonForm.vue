@@ -1,9 +1,6 @@
 <template>
     <div>
-        <b-alert variant="danger" :show="errorOccurred" dismissible fade>Si è verificato un errore durante il recupero
-            dei dati dal
-            server
-            remoto.
+        <b-alert variant="danger" :show="errorOccurred" dismissible fade>{{errorMessage}}
         </b-alert>
         <b-form class="container align-content-center">
             <b-modal variant="danger" id="modalConfirmReset" @ok="resetForm">
@@ -87,12 +84,12 @@
                         </div>
                     </div>
                     <div class="row p-3 float-right">
-                        <b-btn variant="success" class="mx-5 button-rotate">
+                        <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode" type="button">
                             <font-awesome-icon icon="check-circle"
                                                class="button-animated-icon-check"></font-awesome-icon>
                             Calcola
                         </b-btn>
-                        <b-btn variant="danger" class="mx-5" @click="confirmReset">
+                        <b-btn variant="danger" class="mx-5" @click="confirmReset" type="reset">
                             <font-awesome-icon class="button-animated-icon-undo" icon="undo"></font-awesome-icon>
                             Reimposta
                         </b-btn>
@@ -124,7 +121,9 @@
                 retrievedPlaces: [],
                 selectedPlace: null,
                 errorOccurred: false,
-                loading: false
+                loading: false,
+                errorMessage: "",
+                fiscalCode: ""
             }
         },
         methods: {
@@ -147,6 +146,7 @@
                     }
                 }).catch(() => {
                     this.errorOccurred = true;
+                    this.errorMessage = "Si è verificato un errore durante il recupero dei dati dal server remoto."
                 }).finally(() => this.loading = false)
             },
             confirmReset() {
@@ -155,6 +155,23 @@
             resetForm() {
 
                 this.currentPerson = new Person();
+            },
+            async calculateFiscalCode() {
+                const formValues = JSON.stringify(this.currentPerson);
+                const formData = new FormData();
+                formData.set('person', formValues);
+                formData.set('placeOfBirthId', this.currentPerson.BirthPlace.id.toString());
+                await ax.post("https://localhost:5001/api/fiscalCode/calculate", formData)
+                    .then(response => {
+                        console.log(response);
+                        this.fiscalCode = response.data;
+                    })
+                    .catch(e => {
+                        if (!e.response) {
+                            this.errorOccurred = true;
+                            this.errorMessage = "Il server non ha inviato alcuna risposta. Riprova più tardi."
+                        }
+                    });
             }
         },
         computed: {
