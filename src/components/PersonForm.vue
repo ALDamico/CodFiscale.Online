@@ -123,7 +123,7 @@
                 errorOccurred: false,
                 loading: false,
                 errorMessage: "",
-                fiscalCode: ""
+                fiscalCode: null
             }
         },
         methods: {
@@ -172,11 +172,6 @@
                             this.errorMessage = "Il server non ha inviato alcuna risposta. Riprova più tardi."
                         }
                     });
-            }
-        },
-        computed: {
-            placeHeader: function () {
-                return this.selectedPlace === null ? 'Luogo di nascita' : this.selectedPlace.name
             }
         }
     }
