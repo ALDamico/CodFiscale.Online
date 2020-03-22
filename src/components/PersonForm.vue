@@ -3,14 +3,13 @@
         <b-alert variant="danger" :show="errorOccurred" dismissible fade>{{errorMessage}}
         </b-alert>
         <b-form class="container align-content-center">
-            <b-modal variant="danger" id="modalConfirmReset" @ok="resetForm">
+            <b-modal variant="danger" id="modalConfirmReset" title="Conferma" @ok="resetForm">
                 Sei sicuro di voler reimpostare il modulo?<br>
                 Tutti i cambiamenti andranno persi!
             </b-modal>
             <div class="card">
                 <div class="card-header">Informazioni personali</div>
                 <div class="card-body">
-                    <!--<div class="form-group">-->
                     <div class="row p-3">
                         <div class="col-3">
                             <label for="personNameInput">Nome</label>
@@ -26,7 +25,8 @@
                             <label for="personSurnameInput">Cognome</label>
                         </div>
                         <div class="col-9">
-                            <b-input class="mx-2" type="text" v-model="currentPerson.Surname" placeholder="Cognome"
+                            <b-input class="mx-2" type="text" v-model="currentPerson.Surname"
+                                     placeholder="Cognome"
                                      id="personSurnameInput"></b-input>
                         </div>
                     </div>
@@ -45,7 +45,8 @@
                             <label for="personGenderInput">Sesso</label>
                         </div>
                         <div class="col-9">
-                            <b-form-select :options="allowedGenderValues" v-model="selectedGender" class="custom-select"
+                            <b-form-select :options="allowedGenderValues" v-model="selectedGender"
+                                           class="custom-select"
                                            @change="changeGender" id="personGenderInput"></b-form-select>
                         </div>
                     </div>
@@ -62,43 +63,23 @@
                                       v-on:selected="changePlace"
                                       placeholder="Luogo di nascita"
                             ></Dropdown>
-                            <!--
-                            <b-dropdown variant="outline-primary" class="col-9" :text="placeHeader"
-                                        id="personBirthPlaceInput">
-                                <b-input class="m-0 p-0" placeholder="Cerca" type="text"
-                                         @change="searchPlace"></b-input>
-                                <b-dropdown-divider/>
-                                <div v-if="!this.loading && retrievedPlaces.length != 0">
-                                    <b-dropdown-item v-bind:key="place.Id" v-for="place in retrievedPlaces"
-                                                     @click="changePlace(place)">
-                                        {{place.name + " (" + place.provinceAbbreviation + ")"}}
-                                    </b-dropdown-item>
-                                </div>
-                                <div v-else-if="this.loading">
-                                    <b-dropdown-item>
-
-                                    </b-dropdown-item>
-                                </div>
-
-                            </b-dropdown>-->
                         </div>
                     </div>
                     <div class="row p-3 float-right">
-                        <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode" type="button">
+                        <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode"
+                               type="button">
                             <font-awesome-icon icon="check-circle"
                                                class="button-animated-icon-check"></font-awesome-icon>
                             Calcola
                         </b-btn>
-                        <b-btn variant="danger" class="mx-5" @click="confirmReset" type="reset">
-                            <font-awesome-icon class="button-animated-icon-undo" icon="undo"></font-awesome-icon>
+                        <b-btn variant="danger" class="mx-5" @click="confirmReset" type="button">
+                            <font-awesome-icon class="button-animated-icon-undo"
+                                               icon="undo"></font-awesome-icon>
                             Reimposta
                         </b-btn>
                     </div>
-
-
                 </div>
             </div>
-            <!--</div>-->
         </b-form>
     </div>
 </template>
@@ -137,7 +118,10 @@
             },
             searchPlace: async function (partialName) {
                 this.loading = true;
-                const targetUrl = "https://localhost:5001/api/places?name=" + partialName;
+                let targetUrl = "https://localhost:5001/api/places?name=" + partialName;
+                if (process.env.NODE_ENV === 'production') {
+                    targetUrl = "";
+                }
                 await ax.get(targetUrl).then(result => {
                     if (result.data === "") {
                         this.retrievedPlaces = [];
@@ -156,15 +140,23 @@
 
                 this.currentPerson = new Person();
             },
-            async calculateFiscalCode() {
+            calculateFiscalCode() {
                 const formValues = JSON.stringify(this.currentPerson);
                 const formData = new FormData();
                 formData.set('person', formValues);
-                formData.set('placeOfBirthId', this.currentPerson.BirthPlace.id.toString());
-                await ax.post("https://localhost:5001/api/fiscalCode/calculate", formData)
+                console.log(this.currentPerson.BirthPlace.id);
+                if (typeof (this.currentPerson.BirthPlace.id) !== 'undefined') {
+                    formData.set('placeOfBirthId', this.currentPerson.BirthPlace.id.toString());
+                } else {
+                    formData.set('placeOfBirthId', null);
+                }
+
+                ax.post("https://localhost:5001/api/fiscalCode/calculate", formData)
                     .then(response => {
-                        console.log(response);
+                        document.getElementById('front').style.transform = 'rotateY(180deg)';
                         this.fiscalCode = response.data;
+                        console.log(response);
+                        //this.fiscalCode = response.data;
                     })
                     .catch(e => {
                         if (!e.response) {

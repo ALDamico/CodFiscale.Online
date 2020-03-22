@@ -7,11 +7,14 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheckCircle, faUndo, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faCheckCircle, faUndo, faSpinner);
+import Navbar from "@/components/Navbar.vue";
+
+library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy);
 
 Vue.use(BootstrapVue);
+Vue.component('navbar', Navbar);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
