@@ -1,0 +1,3 @@
+C:\Users\aldam\WebstormProjects\cod-fiscale-online\obj\Debug\CodFiscale.Online.njsprojAssemblyReference.cache
+C:\Users\aldam\WebstormProjects\cod-fiscale-online\obj\Debug\CodFiscale.Online.njsproj.CoreCompileInputs.cache
+C:\Users\aldam\WebstormProjects\cod-fiscale-online\bin\Microsoft.NodejsTools.WebRole.dll
