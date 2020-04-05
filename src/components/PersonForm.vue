@@ -60,13 +60,22 @@
                         </div>
                         <div class="col-9">
                             <search-dropdown class="fc-dropdown"
-                                    v-model="currentPerson.BirthPlace"
-                                      :options="placesList"
-                                        optionLabel="name"
-                                      :filter="true"
-                                      :showClear="true"
-                                      @input="searchPlace"
-                            ></search-dropdown>
+                                             block
+                                             variant="light"
+                                             v-model="currentPerson.BirthPlace"
+                                             :options="placesList"
+                                             optionLabel="name"
+                                             :filter="true"
+                                             :showClear="true"
+                                             @input="searchPlace"
+                                             text="Luogo di nascita"
+                            >
+                                <template v-slot:search-icon>
+                                    <b-input-group-append is-text>
+                                        <font-awesome-icon icon="search"></font-awesome-icon>
+                                    </b-input-group-append>
+                                </template>
+                            </search-dropdown>
                         </div>
 
                     </div>
@@ -92,7 +101,7 @@
 <script>
     import {Person} from "@/models/Person";
     import ax from 'axios';
-    import { CodFiscaleError } from "@/models/CodFiscaleError.ts";
+    import {CodFiscaleError} from "@/models/CodFiscaleError.ts";
     import SearchDropdown from "@/components/SearchDropdown";
 
     export default {
@@ -124,12 +133,6 @@
                 this.selectedPlace = selectedPlace;
             },
             searchPlace: async function (partialName) {
-                /*const output = this.placesList.map(p =>{
-                    if (p.prettyName.toLowerCase().includes(partialName.toLowerCase())) {
-                        return {id: p.id, name: p.prettyName};
-                    }
-                });
-                return output;*/
 
                 this.loading = true;
                 let targetUrl = "https://localhost:5001/api/places?name=" + partialName;
@@ -170,29 +173,29 @@
                         this.saveFiscalCode();
                         this.$router.push({
                             name: 'fiscalCode',
-                            params: { fiscalCode: this.currentFiscalCode}
+                            params: {fiscalCode: this.currentFiscalCode}
                         });
                     });
             },
             saveFiscalCode() {
-                let localFiscalCodes = JSON.parse( localStorage.getItem('localFiscalCodes'));
+                let localFiscalCodes = JSON.parse(localStorage.getItem('localFiscalCodes'));
                 if (!localFiscalCodes) {
                     localFiscalCodes = [];
                 }
                 localFiscalCodes.push(this.currentFiscalCode);
-                localStorage.setItem('localFiscalCodes',  JSON.stringify(localFiscalCodes));
+                localStorage.setItem('localFiscalCodes', JSON.stringify(localFiscalCodes));
             }
         },
         mounted() {
             const targetUrl = "https://localhost:5001/api/places/all";
-            const placesCache = JSON.parse( localStorage.getItem('placesCache'));
+            const placesCache = JSON.parse(localStorage.getItem('placesCache'));
             ax.get(targetUrl)
                 .then((response) => {
                     this.placesList = response.data.map(p =>
                         ({id: p.id, name: p.prettyName}));
                     const placeListString = this.placesList.map(place => JSON.stringify(place));
 
-                    localStorage.setItem('placesCache',  JSON.stringify(this.placesList));
+                    localStorage.setItem('placesCache', JSON.stringify(this.placesList));
                 })
                 .catch(() => {
                     this.error = new CodFiscaleError("Si è verificato un errore durante il recupero dell'elenco dei luoghi dal server.", "danger");
@@ -211,5 +214,5 @@
         width: 100%;
     }
 
-   
+
 </style>

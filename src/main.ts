@@ -7,10 +7,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch } from '@fortawesome/free-solid-svg-icons'
-import 'primevue/resources/themes/nova-vue/theme.css';
-import 'primevue/resources/primevue.min.css';
-import 'primeicons/primeicons.css';
+import { faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import Navbar from "@/components/Navbar.vue";
 
