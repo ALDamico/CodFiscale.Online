@@ -71,4 +71,6 @@ export class Place {
     public getPrettyName() {
         return this.name + " (" + this.provinceAbbreviation + ")";
     }
+
+
 }

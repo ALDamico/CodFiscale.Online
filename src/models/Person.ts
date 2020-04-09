@@ -64,6 +64,6 @@ export class Person {
         this.surname = null;
         this.gender = Gender.Unspecified;
         this.birthDate = null;
-        this.birthPlace = null;
+        this.birthPlace = new Place();
     }
 }

@@ -62,12 +62,13 @@
                             <search-dropdown class="fc-dropdown"
                                              block
                                              variant="light"
-                                             v-model="currentPerson.BirthPlace"
+                                             v-model="currentPerson.BirthPlace.Name"
                                              :options="placesList"
                                              optionLabel="name"
                                              :filter="true"
                                              :showClear="true"
                                              @input="searchPlace"
+                                             @change="currentPerson.BirthPlace = $event"
                                              text="Luogo di nascita"
                             >
                                 <template v-slot:search-icon>

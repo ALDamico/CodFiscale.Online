@@ -39,13 +39,26 @@
             </b-input-group>
         </b-dropdown-form>
         <b-dropdown-divider/>
-        <div class="scrollable-dropdown">
+        <div v-if="filterText != '' && filteredArray.length > 0">
+            <div class="scrollable-dropdown">
 
-            <b-dropdown-item :key="element.id"
-                             v-for="element in this.filteredArray"
-                             @click="changeSelection(element)"
-            >{{element.name}}
-            </b-dropdown-item>
+                <b-dropdown-item :key="element.id"
+                                 v-for="element in this.filteredArray"
+                                 @click="changeSelection(element)"
+                >{{element.name}}
+                </b-dropdown-item>
+            </div>
+        </div>
+        <div v-else-if="filterText != '' && filteredArray.length == 0">
+            <b-dropdown-text class="text-muted">
+                <b-badge pill variant="danger"><small>
+                    <font-awesome-icon icon="exclamation"/>
+                </small></b-badge>
+                Nessun elemento trovato!
+            </b-dropdown-text>
+        </div>
+        <div v-else>
+            <b-dropdown-text class="text-muted">Digita qualcosa per avviare la ricerca...</b-dropdown-text>
         </div>
     </b-dropdown>
 </template>
@@ -77,6 +90,10 @@
             right: {
                 type: Boolean,
                 default: false
+            },
+            offset: {
+                type: Number,
+                default: 0
             },
             options: {
                 type: Array
@@ -179,17 +196,19 @@
                     return;
                 }
                 const prom = new Promise(this.tryFilter);
-                await prom;
             },
             changeSelection(selectedElement) {
                 this.selectedItemText = selectedElement[this.optionsLabel];
-                this.$emit('change', selectedElement[this.optionsLabel]);
+                this.$emit('change', selectedElement);
+                this.resetText();
             },
             tryFilter() {
                 this.filteredArray = this.options.filter(x => x.name.toLowerCase().includes(this.filterText.toLowerCase()));
+            },
+            resetText() {
+                this.filterText = "";
             }
         },
-
         computed: {
             selectedTextOrDefault() {
                 if (this.selectedItemText) {
