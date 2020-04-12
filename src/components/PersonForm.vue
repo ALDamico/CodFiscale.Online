@@ -35,7 +35,9 @@
                             <label for="personBirthDateInput">Data di nascita</label>
                         </div>
                         <div class="col-9">
-                            <b-form-datepicker class="mx-2" v-model="currentPerson.BirthDate"
+                            <b-form-datepicker class="mx-2"
+                                               value-as-date
+                                               v-model="currentPerson.BirthDate"
                                                placeholder="Data di nascita"
                                                id="personBirthDateInput"></b-form-datepicker>
                         </div>
@@ -67,7 +69,7 @@
                                              optionLabel="name"
                                              :filter="true"
                                              :showClear="true"
-                                             @input="searchPlace"
+                                             :valid-on="currentPerson.BirthDate"
                                              @change="currentPerson.BirthPlace = $event"
                                              text="Luogo di nascita"
                             >
@@ -82,9 +84,9 @@
                     </div>
                     <div class="row p-3 float-right">
                         <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode"
-                               type="button">
+                               type="button" :disabled="isCalculateButtonDisabled">
                             <font-awesome-icon icon="check-circle"
-                                               class="button-animated-icon-check"></font-awesome-icon>
+                                               class="button-animated-icon-check" :disabled="isCalculateButtonDisabled" ></font-awesome-icon>
                             Calcola
                         </b-btn>
                         <b-btn variant="danger" class="mx-5" @click="confirmReset" type="button">
@@ -104,11 +106,26 @@
     import ax from 'axios';
     import {CodFiscaleError} from "@/models/CodFiscaleError.ts";
     import SearchDropdown from "@/components/SearchDropdown";
+    import {Gender} from '@/models/Gender.ts'
 
     export default {
         name: "PersonForm",
         components: {
             SearchDropdown
+        },
+        computed: {
+            isCalculateButtonDisabled() {
+                if (!this.currentPerson.Name ||
+                    !this.currentPerson.Surname  ||
+                    !this.currentPerson.BirthDate ||
+                    this.currentPerson.BirthPlace.name === "" ||
+                    this.currentPerson.Gender === Gender.Unspecified
+
+                ) {
+                    return true;
+                }
+                return false;
+            }
         },
         data: function () {
             return {
@@ -133,24 +150,6 @@
                 this.currentPerson.BirthPlace = selectedPlace;
                 this.selectedPlace = selectedPlace;
             },
-            searchPlace: async function (partialName) {
-
-                this.loading = true;
-                let targetUrl = "https://localhost:5001/api/places?name=" + partialName;
-                if (process.env.NODE_ENV === 'production') {
-                    targetUrl = "";
-                }
-                await ax.get(targetUrl).then(result => {
-                    if (result.data === "") {
-                        this.retrievedPlaces = [];
-                    } else {
-                        this.retrievedPlaces = result.data;
-                    }
-                }).catch(() => {
-                    this.errorOccurred = true;
-                    this.error = new CodFiscaleError("Si è verificato un errore durante il recupero dei dati dal server remoto.", "danger");
-                }).finally(() => this.loading = false)
-            },
             confirmReset() {
                 this.$bvModal.show("modalConfirmReset");
             },
@@ -168,7 +167,9 @@
                     formData.set('placeOfBirthId', null);
                 }
 
-                ax.post("https://localhost:5001/api/fiscalCode/calculate", formData)
+                ax.post("fiscalCode/calculate", formData, {
+                    baseURL: "https://api.codfiscale.online"
+                })
                     .then(response => {
                         this.currentFiscalCode = response.data.fiscalCodeInfo;
                         this.saveFiscalCode();
@@ -176,7 +177,8 @@
                             name: 'fiscalCode',
                             params: {fiscalCode: this.currentFiscalCode}
                         });
-                    });
+                    })
+                    .catch(err => console.log(err));
             },
             saveFiscalCode() {
                 let localFiscalCodes = JSON.parse(localStorage.getItem('localFiscalCodes'));
@@ -186,26 +188,6 @@
                 localFiscalCodes.push(this.currentFiscalCode);
                 localStorage.setItem('localFiscalCodes', JSON.stringify(localFiscalCodes));
             }
-        },
-        mounted() {
-            const targetUrl = "https://localhost:5001/api/places/all";
-            const placesCache = JSON.parse(localStorage.getItem('placesCache'));
-            ax.get(targetUrl)
-                .then((response) => {
-                    this.placesList = response.data.map(p =>
-                        ({id: p.id, name: p.prettyName}));
-                    const placeListString = this.placesList.map(place => JSON.stringify(place));
-
-                    localStorage.setItem('placesCache', JSON.stringify(this.placesList));
-                })
-                .catch(() => {
-                    this.error = new CodFiscaleError("Si è verificato un errore durante il recupero dell'elenco dei luoghi dal server.", "danger");
-                    if (placesCache != null && placesCache.length != 0) {
-                        this.error = new CodFiscaleError("Non è stato possibile connettersi al server per recuperare l'elenco dei luoghi. Verrà usata la copia salvata in cache", "warning")
-                        this.placesList = placesCache;
-                    }
-                    this.errorOccurred = true;
-                });
         }
     }
 </script>

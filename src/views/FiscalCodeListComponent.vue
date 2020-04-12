@@ -6,19 +6,17 @@
                          :fields="tableFields"
                          per-page="10"
                          :current-page="currentPage"
-
                 >
-
                 </b-table>
                 <b-pagination v-model="currentPage" :total-rows="fiscalCodeList.length"></b-pagination>
             </div>
             <b-button-group>
-                <b-button variant="primary">Salva i dati in CSV</b-button>
-                <b-button variant="danger">Cancella tutti i dati locali</b-button>
+                <b-button variant="primary" @click="exportAsCsv">Salva i dati in CSV</b-button>
+                <b-button variant="danger" @click="clearList">Cancella tutti i dati locali</b-button>
             </b-button-group>
         </div>
         <div v-else class="center-on-screen">
-            <font-awesome-icon></font-awesome-icon>
+            <h1><font-awesome-icon icon="user"></font-awesome-icon></h1>
             <p>Non hai ancora calcolato nessun codice fiscale.</p>
             <p>Vai alla pagina <router-link to="/">Calcola</router-link>.</p>
         </div>
@@ -26,6 +24,7 @@
 </template>
 
 <script>
+    import Papa from 'papaparse';
     export default {
         name: "FiscalCodeListComponent",
         data: function () {
@@ -66,8 +65,38 @@
             }
         },
         mounted() {
-            this.fiscalCodeList = JSON.parse(localStorage.getItem('localFiscalCodes')).filter(x => x != null);
-            this.$forceUpdate();
+            const localFiscalCodeCache = JSON.parse(localStorage.getItem('localFiscalCodes'));
+            if (localFiscalCodeCache != null) {
+                this.fiscalCodeList = localFiscalCodeCache.filter(x => x != null);
+            }
+        },
+        methods: {
+            clearList() {
+                this.fiscalCodeList = null;
+                localStorage.setItem('localFiscalCodes', null);
+                this.$forceUpdate();
+            },
+            exportAsCsv() {
+                if (!this.fiscalCodeList || this.fiscalCodeList.length == 0) {
+                    return;
+                }
+                const config = {
+                    quoteChar: '"',
+                    escapeChar: '"',
+                    delimiter: ';',
+                    header: true,
+                    newline: "\r\n"
+                };
+                const output = Papa.unparse(this.fiscalCodeList, config);
+                const data = new Blob([output], {type: 'text/csv;charset=utf-8'});
+                const url = window.URL.createObjectURL(data);
+                console.log(output);
+                const tempLink = document.createElement('a');
+                tempLink.href = url;
+                tempLink.setAttribute('download', 'estrazione.csv');
+                tempLink.click();
+                //window.location = output;
+            }
         }
     }
 </script>

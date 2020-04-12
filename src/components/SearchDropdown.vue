@@ -27,10 +27,11 @@
                 :split-button-type="splitButtonType"
                 :lazy="lazy"
                 :role="role"
+                :validOn="validOn"
     >
         <b-dropdown-form>
             <b-input-group>
-                <b-form-input @input="filter()" v-model="filterText">
+                <b-form-input @input="contactApi()" v-model="filterText">
 
                 </b-form-input>
                 <slot name="search-icon">
@@ -39,7 +40,12 @@
             </b-input-group>
         </b-dropdown-form>
         <b-dropdown-divider/>
-        <div v-if="filterText != '' && filteredArray.length > 0">
+        <div v-if="loading">
+            <b-dropdown-text class="text-muted"><font-awesome-icon icon="spinner"
+                                                                   transform="rotate"
+                                                                   class="fa-spin"/> Ricerca in corso...</b-dropdown-text>
+        </div>
+        <div v-else-if="!loading && filterText != '' && filteredArray.length > 0">
             <div class="scrollable-dropdown">
 
                 <b-dropdown-item :key="element.id"
@@ -49,7 +55,7 @@
                 </b-dropdown-item>
             </div>
         </div>
-        <div v-else-if="filterText != '' && filteredArray.length == 0">
+        <div v-else-if="!loading && filterText != '' && filteredArray.length == 0">
             <b-dropdown-text class="text-muted">
                 <b-badge pill variant="danger"><small>
                     <font-awesome-icon icon="exclamation"/>
@@ -65,11 +71,19 @@
 
 <script>
 
+    import ax from "axios";
+    import {CodFiscaleError} from "@/models/CodFiscaleError";
+    import _ from "lodash"
+
     export default {
         name: "search-dropdown",
         props: {
             id: {
                 type: String
+            },
+            validOn: {
+                type: Date,
+                default: null
             },
             disabled: {
                 type: Boolean,
@@ -187,23 +201,35 @@
             return {
                 filterText: "",
                 filteredArray: [],
-                selectedItemText: ""
+                selectedItemText: "",
+                loading: false
             }
         },
+        created() {
+            this.contactApi = _.debounce(function() {
+                    if (!this.filterText) {
+                        return;
+                    }
+                    this.loading = true;
+                    ax.get("/places", {
+                        baseURL: "https://api.codfiscale.online/",
+                        params: {
+                            name: this.filterText,
+                            validOn: this.validOn
+                        }
+                    })
+                        .then(( result) => {
+                            this.filteredArray =  result.data;
+                            this.loading = false;
+                        }).catch((err) => console.log(err)
+                );
+            }, 500);
+        },
         methods: {
-            async filter() {
-                if (!this.filterText || this.filterText.length < 3) {
-                    return;
-                }
-                const prom = new Promise(this.tryFilter);
-            },
             changeSelection(selectedElement) {
                 this.selectedItemText = selectedElement[this.optionsLabel];
                 this.$emit('change', selectedElement);
                 this.resetText();
-            },
-            tryFilter() {
-                this.filteredArray = this.options.filter(x => x.name.toLowerCase().includes(this.filterText.toLowerCase()));
             },
             resetText() {
                 this.filterText = "";

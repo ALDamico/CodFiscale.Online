@@ -1,8 +1,7 @@
 <template>
-    <div class="about">
+    <div class="about-box">
         <h1>Informazioni su CodFiscale.Online</h1>
-        <div class="jumbotron col-4"><p>Prova</p></div>
-        <p class="col-8">CodFiscale.Online è il sistema per il calcolo del codice fiscale sviluppato da <a
+        <p>CodFiscale.Online è il sistema per il calcolo del codice fiscale sviluppato da <a
                 href="https://www.lucianodamico.info">Andrea Luciano Damico</a>, uno sviluppatore software che vive e
             lavora in provincia di Catania.
         </p>
@@ -21,4 +20,15 @@
             sei libero di clonare i repository e studiarne il codice. E se noti qualcosa che si può migliorare, i contributi
             al codice sono i benvenuti.</p>
     </div>
+
 </template>
+<style scoped>
+    .about-box {
+        margin-left: 10%;
+        margin-right: 10%;
+
+    }
+    .about-box > p {
+        text-align: justify;
+    }
+</style>

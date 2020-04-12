@@ -14,12 +14,13 @@ import {
   faCreditCard,
   faCopy,
   faSearch,
-  faExclamation
+  faExclamation,
+    faUser
 } from '@fortawesome/free-solid-svg-icons';
 
 import Navbar from "@/components/Navbar.vue";
 
-library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation);
+library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation, faUser);
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
