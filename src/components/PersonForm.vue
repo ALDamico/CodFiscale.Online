@@ -15,7 +15,7 @@
                             <label for="personNameInput">Nome</label>
                         </div>
                         <div class="col-9">
-                            <b-input class="mx-2 form-control" type="text" v-model="currentPerson.Name"
+                            <b-input class="mx-2 form-control" type="text" v-model="currentPerson.name"
                                      id="personNameInput"
                                      placeholder="Nome"></b-input>
                         </div>
@@ -64,13 +64,13 @@
                             <search-dropdown class="fc-dropdown"
                                              block
                                              variant="light"
-                                             v-model="currentPerson.BirthPlace.Name"
+                                             v-model="currentPerson.BirthPlaceId"
                                              :options="placesList"
                                              optionLabel="name"
                                              :filter="true"
                                              :showClear="true"
                                              :valid-on="currentPerson.BirthDate"
-                                             @change="currentPerson.BirthPlace = $event"
+                                             @change="currentPerson.BirthPlaceId = $event"
                                              text="Luogo di nascita"
                             >
                                 <template v-slot:search-icon>
@@ -115,10 +115,10 @@
         },
         computed: {
             isCalculateButtonDisabled() {
-                if (!this.currentPerson.Name ||
+                if (!this.currentPerson.name ||
                     !this.currentPerson.Surname  ||
                     !this.currentPerson.BirthDate ||
-                    this.currentPerson.BirthPlace.name === "" ||
+                    this.currentPerson.BirthPlaceId === 0 ||
                     this.currentPerson.Gender === Gender.Unspecified
 
                 ) {
@@ -147,7 +147,7 @@
                 this.currentPerson.Gender = selectedValue;
             },
             changePlace: function (selectedPlace) {
-                this.currentPerson.BirthPlace = selectedPlace;
+                this.currentPerson.BirthPlaceId = selectedPlace.id;
                 this.selectedPlace = selectedPlace;
             },
             confirmReset() {
@@ -158,25 +158,42 @@
                 this.selectedGender = null;
             },
             calculateFiscalCode() {
-                const formValues = JSON.stringify(this.currentPerson);
+                const formValues =  JSON.stringify(this.currentPerson);
+                const p = {
+                    name: this.currentPerson.name,
+                    surname: this.currentPerson.Surname,
+                    birthDate: this.currentPerson.BirthDate.toISOString().split('T')[0],
+                    birthPlaceId: this.currentPerson.BirthPlaceId.id,
+                    gender: this.currentPerson.Gender.valueOf()
+                };
                 const formData = new FormData();
-                formData.set('person', formValues);
-                if (typeof (this.currentPerson.BirthPlace.id) !== 'undefined') {
+                formData.set('request', JSON.stringify(p));
+                /*if (typeof (this.currentPerson.BirthPlace.id) !== 'undefined') {
                     formData.set('placeOfBirthId', this.currentPerson.BirthPlace.id.toString());
                 } else {
                     formData.set('placeOfBirthId', null);
-                }
+                }*/
 
                 ax.post("fiscalCode/calculate", formData, {
-                    baseURL: "https://api.codfiscale.online"
+                    baseURL: "https://localhost:5001", //"https://api.codfiscale.online",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
                 })
                     .then(response => {
-                        this.currentFiscalCode = response.data.fiscalCodeInfo;
-                        this.saveFiscalCode();
-                        this.$router.push({
-                            name: 'fiscalCode',
-                            params: {fiscalCode: this.currentFiscalCode}
-                        });
+                        if (response.data.result === "success") {
+                            this.currentFiscalCode = response.data.fiscalCode;
+                            this.saveFiscalCode();
+                            this.$router.push({
+                                name: 'fiscalCode',
+                                params: {fiscalCode: this.currentFiscalCode}
+                            });
+                        }
+                        else {
+                            const error = new CodFiscaleError("Si sono verificati degli errori");
+                            this.errorMessage = error.ErrorMessage;
+                            this.errorOccurred = true;
+                        }
                     })
                     .catch(err => console.log(err));
             },

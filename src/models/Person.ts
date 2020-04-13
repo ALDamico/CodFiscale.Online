@@ -6,13 +6,13 @@ export class Person {
     private surname: string | null;
     private gender: Gender;
     private birthDate: Date | null;
-    private birthPlace: Place | null;
-    get BirthPlace() {
-        return this.birthPlace;
+    private birthPlaceId: number | null;
+    get BirthPlaceId() {
+        return this.birthPlaceId;
     }
 
-    set BirthPlace(value) {
-        this.birthPlace = value;
+    set BirthPlaceId(value) {
+        this.birthPlaceId = value;
     }
     get BirthDate(){
         return this.birthDate;
@@ -60,10 +60,10 @@ export class Person {
     }
 
     constructor() {
-        this.name = null;
-        this.surname = null;
+        this.name = "";
+        this.surname = "";
         this.gender = Gender.Unspecified;
         this.birthDate = null;
-        this.birthPlace = new Place();
+        this.birthPlaceId = 0;
     }
 }
