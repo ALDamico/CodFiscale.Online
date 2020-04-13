@@ -27,9 +27,13 @@
     import Papa from 'papaparse';
     export default {
         name: "FiscalCodeListComponent",
+        props: {
+            fiscalCodeList: {
+                type: Array
+            }
+        },
         data: function () {
             return {
-                fiscalCodeList: [],
                 tableFields: [
                     {
                         key: "name",
@@ -77,7 +81,7 @@
                 this.$forceUpdate();
             },
             exportAsCsv() {
-                if (!this.fiscalCodeList || this.fiscalCodeList.length == 0) {
+                if (!this.fiscalCodeList || this.fiscalCodeList.length === 0) {
                     return;
                 }
                 const config = {

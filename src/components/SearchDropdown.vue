@@ -45,7 +45,7 @@
                                                                    transform="rotate"
                                                                    class="fa-spin"/> Ricerca in corso...</b-dropdown-text>
         </div>
-        <div v-else-if="!loading && filterText != '' && filteredArray.length > 0">
+        <div v-else-if="!loading && filterText !== '' && filteredArray.length > 0">
             <div class="scrollable-dropdown">
 
                 <b-dropdown-item :key="element.id"
@@ -55,7 +55,7 @@
                 </b-dropdown-item>
             </div>
         </div>
-        <div v-else-if="!loading && filterText != '' && filteredArray.length == 0">
+        <div v-else-if="!loading && filterText !== '' && filteredArray.length === 0">
             <b-dropdown-text class="text-muted">
                 <b-badge pill variant="danger"><small>
                     <font-awesome-icon icon="exclamation"/>
@@ -202,7 +202,8 @@
                 filterText: "",
                 filteredArray: [],
                 selectedItemText: "",
-                loading: false
+                loading: false,
+                error: false
             }
         },
         created() {
@@ -212,7 +213,7 @@
                     }
                     this.loading = true;
                     ax.get("/places", {
-                        baseURL:  "https://localhost:5001", //"https://api.codfiscale.online/",
+                        baseURL:  "https://api.codfiscale.online/",
                         params: {
                             name: this.filterText,
                             validOn: this.validOn
@@ -221,7 +222,10 @@
                         .then(( result) => {
                             this.filteredArray =  result.data;
                             this.loading = false;
-                        }).catch((err) => console.log(err)
+                        }).catch(() => {
+                            this.error = true;
+                            this.loading = false;
+                    }
                 );
             }, 500);
         },

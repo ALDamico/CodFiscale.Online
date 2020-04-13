@@ -175,9 +175,10 @@
                 }*/
 
                 ax.post("fiscalCode/calculate", formData, {
-                    baseURL: "https://localhost:5001", //"https://api.codfiscale.online",
+                    baseURL: "https://api.codfiscale.online",
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Access-Control-Allow-Origin': '*'
                     }
                 })
                     .then(response => {
