@@ -1,7 +1,6 @@
 <template>
     <div>
-        <b-button>Ciao!</b-button>
-        <FiscalCodeComponent :fiscal-code="this.$route.params.fullFiscalCode"></FiscalCodeComponent>
+        <fiscal-code-component :fiscal-code="this.$route.params.fullFiscalCode"></fiscal-code-component>
     </div>
 </template>
 
@@ -16,8 +15,8 @@
 </script>
 
 <style scoped>
-    fiscalCodeComponent {
-        position:absolute;
+    fiscal-code-component {
+        position:center;
         top: 50%;
         left: 50%;
     }
