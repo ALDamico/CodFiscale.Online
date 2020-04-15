@@ -107,6 +107,8 @@
     import {CodFiscaleError} from "@/models/CodFiscaleError.ts";
     import SearchDropdown from "@/components/SearchDropdown";
     import {Gender} from '@/models/Gender.ts'
+    import moment from 'moment';
+
 
     export default {
         name: "PersonForm",
@@ -162,7 +164,7 @@
                 const p = {
                     name: this.currentPerson.name,
                     surname: this.currentPerson.Surname,
-                    birthDate: this.currentPerson.BirthDate.toISOString().split('T')[0],
+                    birthDate: moment(this.currentPerson.BirthDate).format('YYYY-MM-DD'),
                     birthPlaceId: this.currentPerson.BirthPlaceId.id,
                     gender: this.currentPerson.Gender.valueOf()
                 };
