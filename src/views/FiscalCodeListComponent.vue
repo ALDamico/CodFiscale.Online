@@ -1,24 +1,36 @@
 <template>
-    <div class="container-fluid">
-        <div v-if="fiscalCodeList.length > 0">
-            <div class="scroll-horizontally">
-                <b-table :items="fiscalCodeList"
-                         :fields="tableFields"
-                         per-page="10"
-                         :current-page="currentPage"
-                >
-                </b-table>
-                <b-pagination v-model="currentPage" :total-rows="fiscalCodeList.length"></b-pagination>
+    <div>
+        <b-modal id="confirmDelete" @ok="clearList">
+            <template v-slot:modal-title>Conferma cancellazione
+            </template>
+            Sei sicuro di voler eliminare tutti gli elementi presenti in questo elenco?
+        </b-modal>
+        <div class="container-fluid">
+            <div v-if="fiscalCodeList.length > 0">
+                <div class="scroll-horizontally">
+                    <b-table :items="fiscalCodeList"
+                             :fields="tableFields"
+                             per-page="10"
+                             :current-page="currentPage"
+                    >
+                    </b-table>
+                    <b-pagination v-model="currentPage" :total-rows="fiscalCodeList.length"></b-pagination>
+                </div>
+                <b-button-group>
+                    <b-button variant="primary" @click="exportAsCsv">Salva i dati in CSV</b-button>
+                    <b-button variant="danger" @click="confirmClear">Cancella tutti i dati locali</b-button>
+                </b-button-group>
             </div>
-            <b-button-group>
-                <b-button variant="primary" @click="exportAsCsv">Salva i dati in CSV</b-button>
-                <b-button variant="danger" @click="clearList">Cancella tutti i dati locali</b-button>
-            </b-button-group>
-        </div>
-        <div v-else class="center-on-screen">
-            <h1><font-awesome-icon icon="user"></font-awesome-icon></h1>
-            <p>Non hai ancora calcolato nessun codice fiscale.</p>
-            <p>Vai alla pagina <router-link to="/">Calcola</router-link>.</p>
+            <div v-else class="center-on-screen">
+                <h1>
+                    <font-awesome-icon icon="user"></font-awesome-icon>
+                </h1>
+                <p>Non hai ancora calcolato nessun codice fiscale.</p>
+                <p>Vai alla pagina
+                    <router-link to="/">Calcola</router-link>
+                    .
+                </p>
+            </div>
         </div>
     </div>
 </template>
@@ -27,11 +39,6 @@
     import Papa from 'papaparse';
     export default {
         name: "FiscalCodeListComponent",
-        props: {
-            fiscalCodeList: {
-                type: Array
-            }
-        },
         data: function () {
             return {
                 tableFields: [
@@ -65,7 +72,8 @@
                         label: "Luogo di nascita"
                     }
                 ],
-                currentPage: 1
+                currentPage: 1,
+                fiscalCodeList: []
             }
         },
         mounted() {
@@ -75,6 +83,9 @@
             }
         },
         methods: {
+            confirmClear() {
+                this.$bvModal.show("confirmDelete");
+            },
             clearList() {
                 this.fiscalCodeList = null;
                 localStorage.setItem('localFiscalCodes', null);
@@ -94,7 +105,6 @@
                 const output = Papa.unparse(this.fiscalCodeList, config);
                 const data = new Blob([output], {type: 'text/csv;charset=utf-8'});
                 const url = window.URL.createObjectURL(data);
-                console.log(output);
                 const tempLink = document.createElement('a');
                 tempLink.href = url;
                 tempLink.setAttribute('download', 'estrazione.csv');

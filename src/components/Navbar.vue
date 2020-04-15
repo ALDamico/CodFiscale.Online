@@ -1,6 +1,6 @@
 <template>
     <b-navbar toggleable="lg" type="dark" variant="primary">
-        <b-navbar-brand href="#">CodFiscale.Online</b-navbar-brand>
+        <b-navbar-brand to="/">CodFiscale.Online</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 

@@ -10,12 +10,12 @@
             <div class="card">
                 <div class="card-header">Informazioni personali</div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row p-3">
                         <div class="col-3">
                             <label for="personNameInput">Nome</label>
                         </div>
                         <div class="col-9">
-                            <b-input class="mx-2 form-control" type="text" v-model="currentPerson.name"
+                            <b-input class="mx-2" type="text" v-model="currentPerson.name"
                                      id="personNameInput"
                                      placeholder="Nome"></b-input>
                         </div>
@@ -47,8 +47,9 @@
                             <label for="personGenderInput">Sesso</label>
                         </div>
                         <div class="col-9">
-                            <b-form-select :options="allowedGenderValues" v-model="selectedGender"
-                                           class="custom-select"
+                            <b-form-select :options="allowedGenderValues"
+                                           v-model="selectedGender"
+                                           class="mx-2 custom-select"
                                            @change="changeGender" id="personGenderInput"></b-form-select>
                         </div>
                     </div>
@@ -61,7 +62,7 @@
                                                class="fa-spin"/>
                         </div>
                         <div class="col-9">
-                            <search-dropdown class="fc-dropdown"
+                            <search-dropdown class="mx-2 fc-dropdown"
                                              block
                                              variant="light"
                                              v-model="currentPerson.BirthPlaceId"
@@ -184,9 +185,9 @@
                     }
                 })
                     .then(response => {
-                        if (response.data.result === "success") {
+                         if (response.data.result === "success") {
                             this.currentFiscalCode = response.data.fiscalCode;
-                            this.saveFiscalCode();
+                            this.saveFiscalCode(this.currentFiscalCode);
                             this.$router.push({
                                 name: 'fiscalCode',
                                 params: {fiscalCode: this.currentFiscalCode}
@@ -198,14 +199,20 @@
                             this.errorOccurred = true;
                         }
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!",  {
+                            variant: "danger",
+                            toaster: 'b-toaster-bottom-center',
+                            autoHideDelay: 5000
+                        })
+                    });
             },
-            saveFiscalCode() {
+            saveFiscalCode(currentFiscalCode) {
                 let localFiscalCodes = JSON.parse(localStorage.getItem('localFiscalCodes'));
                 if (!localFiscalCodes) {
                     localFiscalCodes = [];
                 }
-                localFiscalCodes.push(this.currentFiscalCode);
+                localFiscalCodes.push(currentFiscalCode);
                 localStorage.setItem('localFiscalCodes', JSON.stringify(localFiscalCodes));
             }
         }
