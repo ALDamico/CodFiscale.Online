@@ -10,6 +10,7 @@
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
                     <b-nav-item to="/">Calcola</b-nav-item>
+                <b-nav-item to="/validate">Convalida</b-nav-item>
                     <b-nav-item to="/about">Chi siamo</b-nav-item>
                     <b-nav-item to="/myFiscalCodes">Archivio</b-nav-item>
             </b-navbar-nav>

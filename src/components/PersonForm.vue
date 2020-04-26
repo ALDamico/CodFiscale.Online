@@ -8,11 +8,14 @@
                 Tutti i cambiamenti andranno persi!
             </b-modal>
             <div class="card">
-                <div class="card-header">Informazioni personali</div>
+                <div class="card-header">
+                    <div v-if="isValidation">Convalida</div>
+                    <div v-else>Informazioni personali</div>
+                </div>
                 <div class="card-body">
                     <div class="row p-3">
                         <div class="col-3">
-                            <label for="personNameInput">Nome</label>
+                            <label for="personNameInput" class="col-form-label">Nome</label>
                         </div>
                         <div class="col-9">
                             <b-input class="mx-2" type="text" v-model="currentPerson.name"
@@ -22,7 +25,7 @@
                     </div>
                     <div class="row p-3">
                         <div class="col-3">
-                            <label for="personSurnameInput">Cognome</label>
+                            <label for="personSurnameInput" class="col-form-label">Cognome</label>
                         </div>
                         <div class="col-9">
                             <b-input class="mx-2" type="text" v-model="currentPerson.Surname"
@@ -32,7 +35,7 @@
                     </div>
                     <div class="row p-3">
                         <div class="col-3">
-                            <label for="personBirthDateInput">Data di nascita</label>
+                            <label for="personBirthDateInput" class="col-form-label">Data di nascita</label>
                         </div>
                         <div class="col-9">
                             <b-form-datepicker class="mx-2"
@@ -44,7 +47,7 @@
                     </div>
                     <div class="row p-3">
                         <div class="col-3">
-                            <label for="personGenderInput">Sesso</label>
+                            <label for="personGenderInput" class="col-form-label">Sesso</label>
                         </div>
                         <div class="col-9">
                             <b-form-select :options="allowedGenderValues"
@@ -55,7 +58,7 @@
                     </div>
                     <div class="row p-3">
                         <div class="col-3">
-                            <label for="personBirthPlaceInput">Luogo di nascita</label>
+                            <label for="personBirthPlaceInput" class="col-form-label">Luogo di nascita</label>
                             <font-awesome-icon v-show="loading"
                                                icon="spinner"
                                                transform="rotate"
@@ -144,14 +147,16 @@
                 placesList: []
             }
         },
+        props: {
+            isValidation: {
+                type: Boolean,
+                default: false
+            }
+        },
         methods: {
             changeGender: function (selectedValue) {
                 this.selectedGender = selectedValue;
                 this.currentPerson.Gender = selectedValue;
-            },
-            changePlace: function (selectedPlace) {
-                this.currentPerson.BirthPlaceId = selectedPlace.id;
-                this.selectedPlace = selectedPlace;
             },
             confirmReset() {
                 this.$bvModal.show("modalConfirmReset");
@@ -161,7 +166,6 @@
                 this.selectedGender = null;
             },
             calculateFiscalCode() {
-                const formValues =  JSON.stringify(this.currentPerson);
                 const p = {
                     name: this.currentPerson.name,
                     surname: this.currentPerson.Surname,
@@ -171,11 +175,6 @@
                 };
                 const formData = new FormData();
                 formData.set('request', JSON.stringify(p));
-                /*if (typeof (this.currentPerson.BirthPlace.id) !== 'undefined') {
-                    formData.set('placeOfBirthId', this.currentPerson.BirthPlace.id.toString());
-                } else {
-                    formData.set('placeOfBirthId', null);
-                }*/
 
                 ax.post("fiscalCode/calculate", formData, {
                     baseURL: "https://api.codfiscale.online",

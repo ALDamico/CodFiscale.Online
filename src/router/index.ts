@@ -28,6 +28,14 @@ const routes = [
     path: '/myFiscalCodes',
     name: 'myFiscalCodes',
     component: () => import('../views/FiscalCodeListComponent.vue')
+  },
+  {
+    path: '/validate',
+    name: 'Convalida',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "validate" */ '../views/Validate.vue')
   }
 ]
 
