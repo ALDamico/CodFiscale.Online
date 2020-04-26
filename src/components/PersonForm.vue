@@ -13,6 +13,14 @@
                     <div v-else>Informazioni personali</div>
                 </div>
                 <div class="card-body">
+                    <div v-if="isValidation" class="row p-3">
+                        <div class="col-3">
+                            <label for="fiscalCodeInput" class="col-form-label">Codice Fiscale</label>
+                        </div>
+                        <div class="col-9">
+                            <b-input class="mx-2" v-model="currentFiscalCode.fiscalCode" id="fiscalCodeInput"></b-input>
+                        </div>
+                    </div>
                     <div class="row p-3">
                         <div class="col-3">
                             <label for="personNameInput" class="col-form-label">Nome</label>
@@ -87,12 +95,24 @@
 
                     </div>
                     <div class="row p-3 float-right">
-                        <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode"
-                               type="button" :disabled="isCalculateButtonDisabled">
-                            <font-awesome-icon icon="check-circle"
-                                               class="button-animated-icon-check" :disabled="isCalculateButtonDisabled" ></font-awesome-icon>
-                            Calcola
-                        </b-btn>
+                        <div v-if="isValidation">
+                            <b-btn variant="success" class="mx-5 button-rotate" @click="validateFiscalCode"
+                                   type="button" :disabled="isCalculateButtonDisabled">
+                                <font-awesome-icon icon="check-circle"
+                                                   class="button-animated-icon-check"
+                                                   :disabled="isCalculateButtonDisabled"></font-awesome-icon>
+                                Convalida
+                            </b-btn>
+                        </div>
+                        <div v-else>
+                            <b-btn variant="success" class="mx-5 button-rotate" @click="calculateFiscalCode"
+                                   type="button" :disabled="isCalculateButtonDisabled">
+                                <font-awesome-icon icon="check-circle"
+                                                   class="button-animated-icon-check"
+                                                   :disabled="isCalculateButtonDisabled"></font-awesome-icon>
+                                Calcola
+                            </b-btn>
+                        </div>
                         <b-btn variant="danger" class="mx-5" @click="confirmReset" type="button">
                             <font-awesome-icon class="button-animated-icon-undo"
                                                icon="undo"></font-awesome-icon>
@@ -122,7 +142,7 @@
         computed: {
             isCalculateButtonDisabled() {
                 if (!this.currentPerson.name ||
-                    !this.currentPerson.Surname  ||
+                    !this.currentPerson.Surname ||
                     !this.currentPerson.BirthDate ||
                     this.currentPerson.BirthPlaceId === 0 ||
                     this.currentPerson.Gender === Gender.Unspecified
@@ -165,6 +185,27 @@
                 this.currentPerson = new Person();
                 this.selectedGender = null;
             },
+            validateFiscalCode() {
+                const request = {
+                    name: this.currentPerson.name,
+                    surname: this.currentPerson.surname,
+                    birthDate: this.currentPerson.BirthDate,
+                    birthPlaceId: this.currentPerson.BirthPlaceId.id,
+                    gender: this.currentPerson.Gender.valueOf(),
+                    fiscalCode: this.currentFiscalCode.fiscalCode
+                }
+                ax.post("fiscalCode/validate", request, {
+                    baseURL: "https://localhost:5001",
+                    body: request
+                }).then((res) => {
+                    if (res.status === 200) {
+                        this.$router.push({
+                            name: 'validationResult',
+                            params: {result: res.data}
+                        })
+                    }
+                });
+            },
             calculateFiscalCode() {
                 const p = {
                     name: this.currentPerson.name,
@@ -184,22 +225,21 @@
                     }
                 })
                     .then(response => {
-                         if (response.data.result === "success") {
+                        if (response.data.result === "success") {
                             this.currentFiscalCode = response.data.fiscalCode;
                             this.saveFiscalCode(this.currentFiscalCode);
                             this.$router.push({
                                 name: 'fiscalCode',
                                 params: {fiscalCode: this.currentFiscalCode}
                             });
-                        }
-                        else {
+                        } else {
                             const error = new CodFiscaleError("Si sono verificati degli errori");
                             this.errorMessage = error.ErrorMessage;
                             this.errorOccurred = true;
                         }
                     })
                     .catch(err => {
-                        this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!",  {
+                        this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!", {
                             variant: "danger",
                             toaster: 'b-toaster-bottom-center',
                             autoHideDelay: 5000
