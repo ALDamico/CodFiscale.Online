@@ -1,5 +1,6 @@
 <template>
     <div>
+        <loading :active.sync="isLoading" :can-cancel="false" is-full-page></loading>
         <b-alert :variant="this.error.errorSeverity" :show="errorOccurred" dismissible fade>{{error.errorMessage}}
         </b-alert>
         <b-form class="container align-content-center">
@@ -132,12 +133,14 @@
     import SearchDropdown from "@/components/SearchDropdown";
     import {Gender} from '@/models/Gender.ts'
     import moment from 'moment';
+    import Loading from 'vue-loading-overlay';
 
 
     export default {
         name: "PersonForm",
         components: {
-            SearchDropdown
+            SearchDropdown,
+            Loading
         },
         computed: {
             isCalculateButtonDisabled() {
@@ -164,7 +167,8 @@
                 loading: false,
                 error: new CodFiscaleError(),
                 currentFiscalCode: {},
-                placesList: []
+                placesList: [],
+                isLoading: false
             }
         },
         props: {
@@ -201,12 +205,13 @@
                     if (res.status === 200) {
                         this.$router.push({
                             name: 'validationResult',
-                            params: {result: res.data}
+                            params: {validationResult: res.data}
                         })
                     }
                 });
             },
             calculateFiscalCode() {
+                this.isLoading = true;
                 const p = {
                     name: this.currentPerson.name,
                     surname: this.currentPerson.Surname,
@@ -218,7 +223,7 @@
                 formData.set('request', JSON.stringify(p));
 
                 ax.post("fiscalCode/calculate", formData, {
-                    baseURL: "https://api.codfiscale.online",
+                    baseURL: "https://localhost:5001",
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'Access-Control-Allow-Origin': '*'
@@ -237,6 +242,7 @@
                             this.errorMessage = error.ErrorMessage;
                             this.errorOccurred = true;
                         }
+                        this.isLoading = false;
                     })
                     .catch(err => {
                         this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!", {
@@ -244,6 +250,7 @@
                             toaster: 'b-toaster-bottom-center',
                             autoHideDelay: 5000
                         })
+                        this.isLoading = false;
                     });
             },
             saveFiscalCode(currentFiscalCode) {

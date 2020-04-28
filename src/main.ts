@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import Navbar from "@/components/Navbar.vue";
-
+import 'vue-loading-overlay/dist/vue-loading.css';
 library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation, faUser);
 
 Vue.use(BootstrapVue);

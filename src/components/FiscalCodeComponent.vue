@@ -4,7 +4,7 @@
             <div class="card-header">Codice Fiscale</div>
             <div class="card-body">
                 <b-input-group>
-                    <b-input v-model="currentFiscalCode" disabled/>
+                    <b-input v-model="currentFiscalCode.fiscalCode" disabled/>
                     <b-input-group-append>
                         <b-button variant="success" @click="copyToClipboard">
                             <font-awesome-icon icon="copy" id="btnCopy"></font-awesome-icon>
@@ -39,7 +39,18 @@
             }
         },
         mounted() {
-            this.currentFiscalCode = this.$route.params.fiscalCode.fiscalCode;
+            if (typeof this.$route.params.fiscalCode !== 'undefined') {
+                this.currentFiscalCode = this.$route.params.fiscalCode;
+            }
+            else {
+                this.$router.replace({
+                    name: 'Errore',
+                    params: {
+                        errorMessage: "L'oggetto Codice Fiscale non era definito."
+                    }
+                });
+            }
+
         }
     }
 </script>

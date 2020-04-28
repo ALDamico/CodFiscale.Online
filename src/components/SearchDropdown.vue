@@ -217,6 +217,10 @@
                         params: {
                             name: this.filterText,
                             validOn: this.validOn
+                        },
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Accept': 'application/json'
                         }
                     })
                         .then(( result) => {
