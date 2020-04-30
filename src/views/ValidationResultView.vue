@@ -1,5 +1,5 @@
 <template>
-    <validation-result></validation-result>
+    <validation-result :validation-result="validationResult"></validation-result>
 </template>
 
 <script>
@@ -8,7 +8,10 @@
         name: "ValidationResultView",
         components: {ValidationResult},
         props: {
-            //validationResult
+            validationResult: {
+                type: Object,
+                default: () => ({})
+            }
         }
     }
 </script>

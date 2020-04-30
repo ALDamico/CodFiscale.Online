@@ -47,11 +47,15 @@
                             <label for="personBirthDateInput" class="col-form-label">Data di nascita</label>
                         </div>
                         <div class="col-9">
-                            <b-form-datepicker class="mx-2"
+                            <date-picker class="mx-2"
+                                         v-model="currentPerson.BirthDate"
+                                         placeholder="Data di nascita"
+                                         bootstrap-styling :language="it" typeable format="dd/MM/yyyy"></date-picker>
+                          <!--  <b-form-datepicker class="mx-2"
                                                value-as-date
                                                v-model="currentPerson.BirthDate"
                                                placeholder="Data di nascita"
-                                               id="personBirthDateInput"></b-form-datepicker>
+                                               id="personBirthDateInput"></b-form-datepicker>-->
                         </div>
                     </div>
                     <div class="row p-3">
@@ -134,13 +138,15 @@
     import {Gender} from '@/models/Gender.ts'
     import moment from 'moment';
     import Loading from 'vue-loading-overlay';
-
+    import DatePicker from 'vuejs-datepicker';
+    import {it} from 'vuejs-datepicker/dist/locale';
 
     export default {
         name: "PersonForm",
         components: {
             SearchDropdown,
-            Loading
+            Loading,
+            DatePicker
         },
         computed: {
             isCalculateButtonDisabled() {
@@ -158,6 +164,7 @@
         },
         data: function () {
             return {
+                it: it,
                 currentPerson: new Person(),
                 allowedGenderValues: ['Maschile', 'Femminile'],
                 selectedGender: null,
