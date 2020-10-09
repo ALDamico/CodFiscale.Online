@@ -1,5 +1,6 @@
 <template>
-    <person-form is-validation></person-form>
+    <div class="p-5">
+    <person-form is-validation></person-form></div>
 </template>
 
 <script>
