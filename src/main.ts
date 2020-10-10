@@ -18,9 +18,12 @@ import {
     faUser
 } from '@fortawesome/free-solid-svg-icons';
 
+import {faQuestionCircle}
+from '@fortawesome/free-solid-svg-icons';
+
 import Navbar from "@/components/Navbar.vue";
 import 'vue-loading-overlay/dist/vue-loading.css';
-library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation, faUser);
+library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation, faUser, faQuestionCircle);
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);

@@ -55,6 +55,12 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "validationResult" */ '../views/ValidationResultView.vue')
   },
+  {
+    path: '/admin/update',
+    name: 'update',
+    props: true,
+    component: () => import(/* webpackChunkName: "update" */ '../views/UploadData.vue')
+  }
 ]
 
 const router = new VueRouter({
