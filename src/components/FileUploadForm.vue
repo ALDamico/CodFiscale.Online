@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="row">
+  <div class="container top-row">
+    <div id="firstRow" class="row">
       <h2>Aggiornamento del database</h2>
       <font-awesome-icon class="align-self-center tooltip-icon"
                          icon="question-circle"
@@ -11,7 +11,7 @@
       <div class="row form-group">
         <label class="col-form-label col-2" for="fileInput">File</label>
         <b-form-file id="fileInput" class="col-10" browse-text="Scegli"
-                     placeholder="Seleziona un file da caricare" v-model="fileSource"></b-form-file>
+                     placeholder="Seleziona un file da caricare" v-model="file"></b-form-file>
       </div>
       <div class="row form-group">
         <label for="allowedSourcesSelector"
@@ -25,14 +25,17 @@
           <div class="text-left">
             Ti consente di selezionare il tipo di file che stai caricando.
             <ul>
-              <li><b>Istat</b>: È il file dei comuni italiani rilasciato dall'Istituto di Statistica.</li>
-              <li><b>ANPR</b>: È il file dei comuni italiani rilasciato dal Ministero dell'Interno.</li>
+              <li><strong>Istat</strong>: È il file dei comuni italiani rilasciato dall'Istituto di Statistica.</li>
+              <li><strong>ANPR</strong>: È il file dei comuni italiani rilasciato dal Ministero dell'Interno.</li>
             </ul>
           </div>
         </b-tooltip>
 
-        <label class="col-form-label col-2" for="overwriteDbCheckbox">Sovrascrivi</label>
-        <b-checkbox class="align-self-center" id="overwriteDbCheckbox" v-model="overwriteDb"></b-checkbox>
+        <label class="col-form-label col-2" 
+               for="overwriteDbCheckbox">Sovrascrivi</label>
+        <b-checkbox class="align-self-center" 
+                    id="overwriteDbCheckbox" 
+                    v-model="overwriteDb"></b-checkbox>
         <font-awesome-icon class="align-self-center tooltip-icon"
                            icon="question-circle"
                            id="overwriteDbHelpIcon"></font-awesome-icon>
@@ -47,12 +50,12 @@
       <div class="row form-group">
         <div class="col-12">
           <div class="float-right">
-            <b-button @click="submitForm()" variant="success">Esegui</b-button>
+            <b-button @click="submitForm()" variant="success" :disabled="executeButtonDisabled">Esegui</b-button>
           </div>
         </div>
       </div>
     </b-form>
-  </div>
+  </div> 
 </template>
 
 <script>
@@ -70,6 +73,19 @@ export default {
     submitForm() {
       return;
     }
+  },
+  computed: {
+    executeButtonDisabled() {
+      if (this.file === null) {
+        return true;
+      }
+
+      if (this.fileSource === null) {
+        return true;
+      }
+
+      return false;
+    }
   }
 }
 </script>
@@ -86,6 +102,14 @@ export default {
 
 label {
   font-weight: bold;
+}
+
+.firstRow {
+  top: 40px;
+  left: 0px;
+}
+.top-row {
+  margin-top: 80px;
 }
 
 </style>

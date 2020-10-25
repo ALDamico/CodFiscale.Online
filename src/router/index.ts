@@ -60,6 +60,12 @@ const routes = [
     name: 'update',
     props: true,
     component: () => import(/* webpackChunkName: "update" */ '../views/UploadData.vue')
+  },
+  {
+    path: '/admin/update/preview',
+    name: 'preview',
+    props: true,
+    component: () => import(/* webpackChunkName: "update" */ '../views/ImportPreview.vue')
   }
 ]
 

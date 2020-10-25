@@ -1,7 +1,7 @@
 <template>
     <div>
         <loading :active.sync="isLoading" :can-cancel="false" is-full-page></loading>
-        <b-alert :variant="this.error.errorSeverity" :show="errorOccurred" dismissible fade>{{error.errorMessage}}
+        <b-alert :variant="this.error.ErrorSeverity" :show="errorOccurred" dismissible fade>{{error.ErrorMessage}}
         </b-alert>
         <b-form class="container align-content-center">
             <b-modal variant="danger" id="modalConfirmReset" title="Conferma" @ok="resetForm">
@@ -198,8 +198,8 @@
             },
             validateFiscalCode() {
                 const request = {
-                    name: this.currentPerson.name,
-                    surname: this.currentPerson.surname,
+                    name: this.currentPerson.Name,
+                    surname: this.currentPerson.Surname,
                     birthDate: this.currentPerson.BirthDate,
                     birthPlaceId: this.currentPerson.BirthPlaceId.id,
                     gender: this.currentPerson.Gender.valueOf(),
@@ -252,7 +252,7 @@
                         this.isLoading = false;
                     })
                     .catch(err => {
-                        this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!", {
+                        this.$bvToast.toast("Si è verificato un errore nella comunicazione col server!".concat("\n").concat(err), {
                             variant: "danger",
                             toaster: 'b-toaster-bottom-center',
                             autoHideDelay: 5000

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Vuex from 'vuex';
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 
 import App from './App.vue'
@@ -23,12 +24,14 @@ from '@fortawesome/free-solid-svg-icons';
 
 import Navbar from "@/components/Navbar.vue";
 import 'vue-loading-overlay/dist/vue-loading.css';
+
 library.add(faCheckCircle, faUndo, faSpinner, faCreditCard, faCopy, faSearch, faExclamation, faUser, faQuestionCircle);
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.component('navbar', Navbar);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 

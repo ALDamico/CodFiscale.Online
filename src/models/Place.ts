@@ -6,7 +6,7 @@ export class Place {
     private code: string;
     private id?: number;
 
-    get Id() {
+    public get Id() {
         const id = this.id;
         if (id == undefined) {
             return 0;
@@ -14,50 +14,50 @@ export class Place {
         return id;
     }
 
-    set Id(value: number) {
+    public set Id(value: number) {
         this.id = value;
     }
 
-    set Code(value) {
+    public set Code(value) {
         if (value != null && value.length != 4) {
             throw new Error("The code must be 4 characters long.");
         }
         this.code = value;
     }
 
-    get Code() {
+    public get Code() {
         return this.code;
     }
 
-    get Region() {
+    public get Region() {
         return this.region;
     }
 
-    set Region(value) {
+    public set Region(value) {
         this.region = value;
     }
 
-    get ProvinceAbbreviation() {
+    public get ProvinceAbbreviation() {
         return this.provinceAbbreviation;
     }
 
-    set ProvinceAbbreviation(value) {
+    public set ProvinceAbbreviation(value) {
         if (value != null && value.length !== 2) {
             throw new Error("Province abbreviation can either be null or a two-character-long string.");
         }
         this.provinceAbbreviation = value;
     }
-    get Province() {
+    public get Province() {
         return this.province;
     }
 
-    set Province(value) {
+    public set Province(value) {
         this.province = value;
     }
-    get Name() {
+    public get Name() {
         return this.name;
     }
-    set Name(value) {
+    public set Name(value) {
         this.name = value;
     }
     constructor() {

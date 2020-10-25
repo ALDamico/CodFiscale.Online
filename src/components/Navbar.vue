@@ -1,5 +1,5 @@
 <template>
-    <b-navbar toggleable="lg" type="dark" variant="primary">
+    <b-navbar class="col-12" toggleable="lg" type="dark" variant="primary">
         <b-navbar-brand to="/">CodFiscale.Online</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -27,6 +27,9 @@
 <style scoped>
     .navbar {
         background-color: forestgreen !important;
+        position:fixed;
+        overflow: hidden;
+        z-index: 99;
     }
 
     .navbar-brand {

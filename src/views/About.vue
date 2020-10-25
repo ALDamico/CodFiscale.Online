@@ -24,6 +24,7 @@
 </template>
 <style scoped>
     .about-box {
+        margin-top: 100px;
         margin-left: 10%;
         margin-right: 10%;
 
